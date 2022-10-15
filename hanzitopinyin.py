@@ -34,7 +34,7 @@ if __name__ == '__main__':
     parser.add_argument("-o", "--output", type=str, help="Output file", action="store")
     parser.add_argument("-f", "--format", type=int, help="Destination format. 1=pinyin (default), 2=hanzi+pinyin",
                         action="store", default=1)
-    parser.add_argument("-t", "--tones", help="Tones: 1=marks (default), 2=numbers", action="store", default=1)
+    parser.add_argument("-t", "--tones", type=int, help="Tones: 1=marks (default), 2=numbers", action="store", default=1)
     parser.add_argument("-v", "--verbose", action="count", default=0, help="Verbose output, showing intermediate steps")
     parser.add_argument("file", type=str, help="Input SRT file")
     args = parser.parse_args()
@@ -57,4 +57,4 @@ if __name__ == '__main__':
     else:
         tones = 'marks'
 
-    hanzi_to_pinyin(args.file, args.output, args.format, args.tones)
+    hanzi_to_pinyin(args.file, output, args.format, tones)
