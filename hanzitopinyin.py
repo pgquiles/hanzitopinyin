@@ -4,6 +4,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 import os
+import sys
 import argparse
 import pysrt
 from xpinyin import Pinyin
@@ -31,7 +32,7 @@ def hanzi_to_pinyin(input, output, format, tones):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--output", type=str, help="Output file", action="store")
+    parser.add_argument("-o", "--output", nargs='?', type=str, help="Output file", action="store", default="")
     parser.add_argument("-f", "--format", type=int, help="Destination format. 1=pinyin (default), 2=hanzi+pinyin",
                         action="store", default=1)
     parser.add_argument("-t", "--tones", type=int, help="Tones: 1=marks (default), 2=numbers", action="store", default=1)
@@ -40,10 +41,14 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     output = ''
+#    print("ARGS.OUTPUT = " + args.output)
     if args.output:
         output = args.output
     else:
-        output = os.path.splitext(args.input)[0] + '.zh_CN-pinyin.srt'
+        if args.format == 1:
+            output = os.path.splitext(args.file)[0].replace('.zh_CN-hanzi', '') + '.zh_CN-pinyin.srt'
+        elif args.format == 2:
+            output = os.path.splitext(args.file)[0].replace('.zh_CN-hanzi', '') + '.zh_CN-hanzi+pinyin.srt'
 
     tones = ''
     if args.tones:
