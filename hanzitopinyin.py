@@ -30,8 +30,8 @@ def hanzi_to_pinyin(my_input, my_output, my_format, my_tones, my_translator):
         elif my_format == 2:
             sub.text = my_text + '\n' + my_pinyin
         elif my_format == 3:
-            my_english = my_translator.translate_text(my_text, target_lang="EN")
-            sub.text = my_english + '\n' + my_text + '\n' + my_pinyin
+            my_english = my_translator.translate_text(my_text, source_lang="ZH", target_lang="EN-US")
+            sub.text = my_english.text + '\n' + my_text + '\n' + my_pinyin
 
     subs.save(my_output)
 
@@ -47,6 +47,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     output = ""
+    translator = ""
     if args.output:
         output = args.output
     else:
@@ -55,9 +56,10 @@ if __name__ == '__main__':
         elif args.format == 2:
             output = os.path.splitext(args.file)[0].replace('.zh_CN-hanzi', '') + '.zh_CN-hanzi+pinyin.srt'
         elif args.format == 3:
+            output = os.path.splitext(args.file)[0].replace('.zh_CN-hanzi', '') + '.zh_CN-english+hanzi+pinyin.srt'
             config = configparser.ConfigParser()
             config.read("hanzitopinyin.conf")
-            auth_key = config['deepl']['token']
+            auth_key = config['deepl']['auth_key']
             translator = deepl.Translator(auth_key)
 
     tones = ''
@@ -73,3 +75,12 @@ if __name__ == '__main__':
         tones = 'marks'
 
     hanzi_to_pinyin(args.file, output, args.format, tones, translator)
+
+    if args.format == 3 and args.verbose:
+        usage = translator.get_usage()
+        if usage.any_limit_reached:
+            print('Translation limit reached.')
+        if usage.character.valid:
+            print(f"Character usage: {usage.character.count} of {usage.character.limit}")
+        if usage.document.valid:
+            print(f"Document usage: {usage.document.count} of {usage.document.limit}")
