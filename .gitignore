@@ -1,4 +1,4 @@
-vent
+venv
 *~
 .idea
-hanzitopinyin.conf
+*.conf
