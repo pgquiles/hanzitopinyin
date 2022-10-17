@@ -9,4 +9,4 @@ Since I wrote this tool to study Chinese, it's possible to output the subtitles 
 * 2: hanzi + pinyin
 * 3: English + Hanzi + Pinyin
 
-Option 3 uses DeepL to translate, which requires an API key. DeepL provides free API keys with some limitations but they should be enough for this tool.
+Option 3 uses DeepL to translate, which requires an API key. DeepL provides free API keys with some limitations but they should be enough for this tool. You must write the DeepL API key to the `hanzitopinyin.conf` file!!!
