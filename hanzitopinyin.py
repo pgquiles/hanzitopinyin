@@ -60,6 +60,10 @@ if __name__ == '__main__':
             config = configparser.ConfigParser()
             config.read("hanzitopinyin.conf")
             auth_key = config['deepl']['auth_key']
+            if auth_key == "":
+                print("ERROR: Translation with DeepL requested but no authentication key provided. "
+                      "Please edit hanzitopinyin.conf to add it.")
+                exit(1)
             translator = deepl.Translator(auth_key)
 
     tones = ''
