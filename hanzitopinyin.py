@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
 import os
-import sys
 import argparse
 
 import deepl
@@ -15,13 +11,10 @@ import configparser
 
 def hanzi_to_pinyin(my_input, my_output, my_format, my_tones, my_translator, extension):
     if extension == ".srt":
-        print("Using SRT handler")
         hanzi_to_pinyin_srt(my_input, my_output, my_format, my_tones, my_translator)
     elif extension == ".txt":
-        print("Using TXT handler")
         hanzi_to_pinyin_txt(my_input, my_output, my_format, my_tones, my_translator)
     elif extension == ".docx":
-        print("Using DOCX handler")
         hanzi_to_pinyin_docx(my_input, my_output, my_format, my_tones, my_translator)
     else:
         print("ERROR: unsupported file type.")
