@@ -1,0 +1,12 @@
+altgraph==0.17.3
+certifi==2022.9.24
+chardet==5.0.0
+charset-normalizer==2.1.1
+deepl==1.11.0
+idna==3.4
+pyinstaller==5.5
+pyinstaller-hooks-contrib==2022.10
+pysrt==1.1.2
+requests==2.28.1
+urllib3==1.26.12
+xpinyin==0.7.6
