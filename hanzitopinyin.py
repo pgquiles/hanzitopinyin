@@ -93,10 +93,10 @@ def hanzi_to_pinyin_docx(my_input, my_output, my_format, my_tones, my_translator
 
     with zipfile.ZipFile(my_input, 'r') as zip_ref:
         zip_ref.extractall(tempdir.name)
+
         res = []
         for (dir_path, dir_names, file_names) in walk(tempdir.name):
             res.extend(file_names)
-        print(res)
 
         pinyinize_word_xml(tempdir.name, "document.xml", my_format, my_tones, my_translator)
 
@@ -111,14 +111,40 @@ def hanzi_to_pinyin_docx(my_input, my_output, my_format, my_tones, my_translator
         with zipfile.ZipFile(my_output, 'w', zipfile.ZIP_DEFLATED) as zipf:
             zipdir(tempdir.name, zipf)
 
+
 def pinyinize_word_xml(dir, file, my_format, my_tones, my_translator):
     tree = ET.parse(os.path.join(dir, "word", file))
     namespace = {'w': "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
-    texts = tree.findall('.//w:t', namespace)
+    ET.register_namespace("w", namespace["w"])
+    text_elements = tree.findall('.//w:t', namespace)
     p = Pinyin()
-    for text in texts:
-        my_pinyin = p.get_pinyin(text.text, tone_marks=my_tones)
-        text.text = my_pinyin
+    for text_element in text_elements:
+        my_pinyin = p.get_pinyin(text_element.text, tone_marks=my_tones)
+        if my_format == 1:
+            if my_pinyin == text_element.text:
+                pass
+            else:
+                text_element.text = my_pinyin
+        elif my_format == 2:
+            break_element = ET.SubElement(text_element, "w:br")
+            if my_pinyin == text_element.text:
+                pass
+            else:
+                pinyin_element = ET.SubElement(text_element, "w:t")
+                pinyin_element.text = my_pinyin
+                text_element.append(break_element)
+        elif my_format == 3:
+            my_english = my_translator.translate_text(text_element.text, source_lang="ZH", target_lang="EN-US")
+            break_element = ET.SubElement(text_element, "w:br")
+            if my_pinyin == text_element.text:
+                pass
+            else:
+                english_element = ET.SubElement(text_element, "w:t")
+                english_element.text = my_english.text
+                pinyin_element = ET.SubElement(text_element, "w:t")
+                pinyin_element.text = my_pinyin
+                text_element.append(break_element)
+
     tree.write(os.path.join(dir, "word", file))
 
 
