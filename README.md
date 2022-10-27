@@ -1,6 +1,11 @@
 # hanzitopinyin
 
-Hanzi to pinyin converter for Simplified Chinese subtitles in SubRip (SRT) format.
+Hanzi to pinyin converter for Simplified Chinese documents.
+
+Currently supported:
+* Text files (.txt)
+* Microsoft Word 2007 and later documents (DOCX, i. e. OOXML format)
+* Subtitles in SubRip (SRT) format
 
 Makes use of a dictionary with the 25,500 most common hanzis.
 
