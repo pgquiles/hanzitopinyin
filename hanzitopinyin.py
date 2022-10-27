@@ -8,13 +8,11 @@ from xpinyin import Pinyin
 import configparser
 import glob
 from os import walk
-import sys
 import tempfile
 import zipfile
 import xml.etree.ElementTree as ET
 
 def zipdir(path, ziph):
-    # ziph is zipfile handle
     for root, dirs, files in os.walk(path):
         for file in files:
             ziph.write(os.path.join(root, file),
@@ -37,7 +35,6 @@ def hanzi_to_pinyin(my_input, my_output, my_format, my_tones, my_translator, ext
 
 
 def hanzi_to_pinyin_srt(my_input, my_output, my_format, my_tones, my_translator):
-    # Use a breakpoint in the code line below to debug your script.
     subs = pysrt.open(my_input)
     p = Pinyin()
     for sub in subs:
@@ -60,8 +57,6 @@ def hanzi_to_pinyin_srt(my_input, my_output, my_format, my_tones, my_translator)
 
 
 def hanzi_to_pinyin_txt(my_input, my_output, my_format, my_tones, my_translator):
-    # Use a breakpoint in the code line below to debug your script.
-
     with open(my_input, 'r') as reader:
         p = Pinyin()
         output_text = []
@@ -141,9 +136,10 @@ def pinyinize_word_xml(dir, file, my_format, my_tones, my_translator):
             else:
                 english_element = ET.SubElement(text_element, "w:t")
                 english_element.text = my_english.text
+                text_element.append(break_element)
                 pinyin_element = ET.SubElement(text_element, "w:t")
                 pinyin_element.text = my_pinyin
-                text_element.append(break_element)
+                ET.SubElement(pinyin_element, "w:br")
 
     tree.write(os.path.join(dir, "word", file))
 
