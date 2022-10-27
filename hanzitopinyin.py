@@ -2,11 +2,24 @@
 
 import os
 import argparse
-
 import deepl
 import pysrt
 from xpinyin import Pinyin
 import configparser
+import glob
+from os import walk
+import sys
+import tempfile
+import zipfile
+import xml.etree.ElementTree as ET
+
+def zipdir(path, ziph):
+    # ziph is zipfile handle
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            ziph.write(os.path.join(root, file),
+                       os.path.relpath(os.path.join(root, file),
+                                       os.path.join(path, '.')))
 
 
 def hanzi_to_pinyin(my_input, my_output, my_format, my_tones, my_translator, extension):
@@ -76,7 +89,37 @@ def hanzi_to_pinyin_txt(my_input, my_output, my_format, my_tones, my_translator)
 
 
 def hanzi_to_pinyin_docx(my_input, my_output, my_format, my_tones, my_translator):
-    print("TODO")
+    tempdir = tempfile.TemporaryDirectory()
+
+    with zipfile.ZipFile(my_input, 'r') as zip_ref:
+        zip_ref.extractall(tempdir.name)
+        res = []
+        for (dir_path, dir_names, file_names) in walk(tempdir.name):
+            res.extend(file_names)
+        print(res)
+
+        pinyinize_word_xml(tempdir.name, "document.xml", my_format, my_tones, my_translator)
+
+        headers = glob.glob(os.path.join(tempdir.name, "word", "header*.xml"))
+        for header in headers:
+            pinyinize_word_xml(tempdir.name, header, my_format, my_tones, my_translator)
+
+        footers = glob.glob(os.path.join(tempdir.name, "word", "footer*.xml"))
+        for footer in footers:
+            pinyinize_word_xml(tempdir.name, footer, my_format, my_tones, my_translator)
+
+        with zipfile.ZipFile(my_output, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            zipdir(tempdir.name, zipf)
+
+def pinyinize_word_xml(dir, file, my_format, my_tones, my_translator):
+    tree = ET.parse(os.path.join(dir, "word", file))
+    namespace = {'w': "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+    texts = tree.findall('.//w:t', namespace)
+    p = Pinyin()
+    for text in texts:
+        my_pinyin = p.get_pinyin(text.text, tone_marks=my_tones)
+        text.text = my_pinyin
+    tree.write(os.path.join(dir, "word", file))
 
 
 if __name__ == '__main__':
